@@ -29,16 +29,16 @@ router.get(
 router.post("/signup", async (req, res) => {
   let { name, email, password } = req.body;
   if (password.length < 8) {
-    req.flash("error_msg", "密碼長度過短，至少需要8個數字or英文字。");
+    req.flash("error_msg", "笑死，密碼長度太短了= =至少需要8個數字或英文字。");
     return res.redirect("/auth/signup");
   }
 
-  //確認信箱是否被註冊過
+  // 確認信箱是否被註冊過
   const foundEmail = await User.findOne({ email }).exec();
   if (foundEmail) {
     req.flash(
       "error_msg",
-      "信箱已經被註冊。請使用另一個信箱，或是嘗試使用此信箱登入系統"
+      "???在幹嘛，信箱被註冊了拉。請使用另一個信箱，或者嘗試使用此信箱登入系統"
     );
     return res.redirect("/auth/signup");
   }
@@ -46,10 +46,23 @@ router.post("/signup", async (req, res) => {
   let hashedPassword = await bcrypt.hash(password, 12);
   let newUser = new User({ name, email, password: hashedPassword });
   await newUser.save();
-  req.flash("success_msg", "水啦，註冊成功了，現在可以登入了歐");
+  req.flash("success_msg", "水拉!!!!!恭喜註冊成功! 現在可以登入系統了!");
   return res.redirect("/auth/login");
 });
+
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/auth/login",
+    failureFlash: "北七?登入失敗。帳密都可以打錯欸= =",
+  }),
+  (req, res) => {
+    return res.redirect("/profile");
+  }
+);
+
 router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+  console.log("進入redirect區域");
   return res.redirect("/profile");
 });
 

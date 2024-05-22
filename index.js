@@ -42,7 +42,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//設定routes
+// 設定routes
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 
